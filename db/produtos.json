@@ -1,0 +1,42 @@
+{
+  "produtos": [
+    {
+      "id": "1",
+      "descricao": "Computador Dell",
+      "categoria": "Eletrônico",
+      "preco": "3000"
+    },
+    {
+      "id": "9867",
+      "descricao": "Laptop Dell",
+      "categoria": "Eletronicos",
+      "preco": "2000"
+    },
+    {
+      "id": "b37b",
+      "descricao": "Coca-cola",
+      "categoria": "Bebidas",
+      "preco": "4"
+    },
+    {
+      "id": "714e",
+      "descricao": "Lanche",
+      "categoria": "Comida",
+      "preco": "8"
+    }
+  ],
+  "categoria": [
+    {
+      "id": "1",
+      "nome": "Eletrônicos"
+    },
+    {
+      "id": "1749",
+      "nome": "Roupas e Acessórios"
+    },
+    {
+      "id": "8715",
+      "nome": "Alimento"
+    }
+  ]
+}

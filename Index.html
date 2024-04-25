@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="icon" href="./imagens/compras.png">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Cadastro de Produtos</title>
+</head>
+
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar bg-light custom">
+        <div class="container-fluid container-nav">
+            <a href="" class="navbar-brand d-flex align-items-center">
+                <img src="./imagens/compras.png" alt="">
+                Product Registration
+            </a>
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <i class="bi bi-plus-circle"></i>
+                Adicionar Categoria
+            </button>
+
+        </div>
+
+    </nav>
+
+    <!-- Home -->
+    <div class="container">
+        <div class="container mt-5">
+            <h1>Olá, admin! 👋</h1>
+            <p>Aqui você pode gerenciar seus produtos</p>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form">
+                <h2>
+                    <i class="bi bi-bag-plus-fill"></i>
+                    Registrar novo produto
+                </h2>
+                <div class="mb-3">
+                    <label class="form-label">Categoria do Produto:</label>
+                    <select id="selectCategoria" class="form-select">
+                        <option disabled selected>Selecione</option>
+                    </select>
+
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descrição do Produto:</label>
+                    <input type="text" class="form-control" id="descricao">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Preço:</label>
+                    <input type="text" class="form-control" id="preco">
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary" type="button" id="btnIncluir">Incluir Produto</button>
+                </div>
+            </div>
+            <div class="col-md-6 lista">
+                <h2>
+                    <i class="bi bi-list-nested"></i>
+                    Produtos Cadastrados
+                </h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td>Categoria</td>
+                            <td>Descrição</td>
+                            <td>Preço</td>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastrar Nova Categoria</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form">
+                        <div class="mb-3">
+                            <label class="form-label">Nome da Categoria:</label>
+                            <input type="text" class="form-control" id="nomeCategoria">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary button" id="incluirCategoria">Incluir
+                        Categoria</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function listarProdutos() {
+            /* Endpoint */
+            let url = "http://localhost:3000/produtos"
+
+            fetch(url)
+                .then(res => res.json())
+                .then(saida => {
+                    //criando as linhas da tabela
+                    let tabela = document.getElementById("tabela");
+
+                    for (let i = 0; i < saida.length; i++) {
+                        /* Criando a linha */
+                        let linha = document.createElement("tr")
+
+                        /* Criando as colunas */
+                        let column1 = document.createElement("td")
+                        column1.textContent = saida[i].descricao
+
+                        let column2 = document.createElement("td")
+                        column2.textContent = saida[i].categoria
+
+                        let column3 = document.createElement("td")
+                        column3.textContent = `R$ ${saida[i].preco}`
+
+                        linha.appendChild(column1);
+                        linha.appendChild(column2);
+                        linha.appendChild(column3);
+
+                        tabela.appendChild(linha);
+                    }
+                })
+        }
+
+        listarProdutos();
+        /* Criando um evento de clique no botão */
+        document.getElementById("btnIncluir").addEventListener("click", function () {
+
+            /* Obtendo os valores dos campos de entrada */
+            let descricao = document.getElementById("descricao").value;
+            let categoria = document.getElementById("categoria").value;
+            let preco = document.getElementById("preco").value;
+
+            if (categoria != "Selecione" && descricao != '' && preco != '') {
+                /* Endpoint */
+                let url = "http://localhost:3000/produtos"
+
+                /* Criando um objeto Contato e enviando como json */
+                let produto = JSON.stringify({
+                    descricao: descricao,
+                    categoria: categoria,
+                    preco: preco
+                })
+
+                fetch(url, {
+                    method: 'POST',
+                    body: produto,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    }
+                })
+                    .then(res => res.json())
+                    .then(x => {
+                        listarProdutos()
+                        window.alert('Novo produto incluido com sucesso')
+                    })
+                    .catch(e => window.alert(e))
+
+            } else {
+                window.alert('Insira todos os campos.')
+            }
+        });
+
+        /* Função para listar as categorias no select */
+
+        function listarCategoria() {
+            let urlCategoria = "http://localhost:3000/categoria"
+
+            fetch(urlCategoria)
+                .then(res => res.json())
+                .then(saida => {
+                    //criando os options do select
+                    let select = document.getElementById("selectCategoria");
+
+                    for (let i = 0; i < saida.length; i++) {
+                        /* Criando os options */
+                        let option = document.createElement("option")
+                        option.textContent = saida[i].nome
+
+                        select.appendChild(option);
+                    }
+                })
+        }
+
+        listarCategoria();
+        /* Adicionando evento de cadastrar nova categoria ao botão */
+        document.getElementById("incluirCategoria").addEventListener("click", function () {
+            let nomeCategoria = document.getElementById("nomeCategoria").value;
+
+            if (nomeCategoria != '') {
+                let urlCategoria = "http://localhost:3000/categoria"
+
+                /* Criando o objeto da categoria */
+                let categoria = JSON.stringify({
+                    nome: nomeCategoria
+                })
+
+                /* Enviando o post */
+                fetch(urlCategoria, {
+                    method: 'POST',
+                    body: categoria,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    }
+                })
+                    .then(res => res.json())
+                    .then(x => {
+                        window.alert('Nova categoria incluida com sucesso')
+                    })
+                    .catch(e => window.alert(e))
+                }else{
+                    window.alert('Preencha o nome da categoria.')
+                }
+                })
+    </script>
+</body>
+
+</html>
